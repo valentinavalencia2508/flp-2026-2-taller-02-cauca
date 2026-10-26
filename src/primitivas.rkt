@@ -1,5 +1,5 @@
 #lang eopl
-;Autores: Nombre1 Codigo1, Nombre2 Codigo2
+;Autores: Aura Maria Pelaez Luna 2459422, Valentina Valencia Lopez 2459626
 
 ;; Taller 2 — El intérprete de Cauca.
 ;; Las primitivas del lenguaje y las verificaciones de tipo y de
@@ -17,37 +17,58 @@
 ;; eopl:error a nombre de quien hizo la verificación.
 (define exigir-numeros
   (lambda (args quien)
-    (eopl:error 'exigir-numeros "Sin implementar")))
+    (cond
+      ((null? args)#t)
+      ((number? (car args))
+       (exigir-numeros(cdr args)quien))
+       (else(eopl:error quien "Todos los argumentos deben ser numeros, lo que recibi fue: ~s" args))
+      )))
 
 ;; exigir-enteros : lista x symbol -> boolean
 ;; Retorna #t si todos los argumentos son enteros; si no, levanta error.
 (define exigir-enteros
   (lambda (args quien)
-    (eopl:error 'exigir-enteros "Sin implementar")))
+    (cond
+      ((null? args)#t)
+      ((and (integer? (car args)) (exact? (car args))) (exigir-enteros (cdr args) quien))
+      (else(eopl:error quien "Todos los argumentos deben ser enteros, lo que recibi fue: ~s" args))
+      )))
 
 ;; exigir-booleanos : lista x symbol -> boolean
 ;; Retorna #t si todos los argumentos son booleanos; si no, levanta error.
 (define exigir-booleanos
   (lambda (args quien)
-    (eopl:error 'exigir-booleanos "Sin implementar")))
+    (cond
+      ((null? args)#t)
+      ((boolean? (car args)) (exigir-booleanos(cdr args)quien))
+       (else(eopl:error quien "Todos los argumentos deben ser booleanos, lo que recibi fue: ~s" args))
+      )))
 
 ;; exigir-cantidad : lista x int x symbol -> boolean
 ;; Retorna #t si llegaron exactamente n argumentos; si no, levanta error.
 (define exigir-cantidad
   (lambda (args n quien)
-    (eopl:error 'exigir-cantidad "Sin implementar")))
+    (if (=(length args)n)
+        #t
+        (eopl:error quien "Se esperaban ~s argumentos, recibi ~s" n (length args)))
+      ))
 
 ;; exigir-minimo : lista x int x symbol -> boolean
 ;; Retorna #t si llegaron al menos n argumentos; si no, levanta error.
 (define exigir-minimo
   (lambda (args n quien)
-    (eopl:error 'exigir-minimo "Sin implementar")))
+    (if(>=(length args)n)
+       #t
+       (eopl:error quien "Se esperaban al menos ~s argumentos, recibi ~s" n (length args))
+       )))
 
-;; evaluar-primitiva : primitiva x lista de valores -> valor
-;; Verifica la cantidad y el tipo de los argumentos y aplica la
-;; primitiva. Se resuelve con cases sobre el datatype primitiva.
-(define evaluar-primitiva
-  (lambda (prim args)
-    (eopl:error 'evaluar-primitiva "Sin implementar")))
 
-(provide (all-defined-out))
+;; hay-cero? : lista de números -> boolean
+;; Retorna #t si algún elemento de la lista es igual a cero.
+(define hay-cero?
+  (lambda (lista)
+    (cond
+      ((null? lista) #f)
+      ((= (car lista) 0) #t)
+      (else (hay-cero? (cdr lista))))
+    ))
