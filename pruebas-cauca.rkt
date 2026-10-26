@@ -1,5 +1,5 @@
 #lang eopl
-;Autores: Nombre1 Codigo1, Nombre2 Codigo2
+;Autores: Aura Maria Pelaez Luna 2459422, Valentina Valencia Lopez 2459626
 
 ;; Taller 2 — El intérprete de Cauca.
 ;; Batería de pruebas con rackunit. Llega escrita en el fork y no se
@@ -203,13 +203,36 @@ in case dia of 1 => 100 of 3 => 300 otherwise => 0 end end") 0))
               (check-exn exn:fail?
                          (lambda () (corre "case true of 1 => 1 otherwise => 0 end"))))))
 
+(define scanner-tests
+  (test-suite
+   "Scanner"
+   (test-case "numeros"
+              (check-equal? (scanner "42") '((numero 42 1)))
+              (check-equal? (scanner "-3.5") '((numero -3.5 1))))
+   (test-case "identificadores"
+              (check-equal? (scanner "es_par?") '((identificador es_par? 1))))
+   (test-case "los comentarios se ignoran"
+              (check-equal? (scanner "// c\n42") '((numero 42 2))))))
+
+(define parser-tests
+  (test-suite
+   "Parser"
+   (test-case "literal"
+              (check-equal? (parser "42") (a-program (lit-exp 42))))
+   (test-case "primitiva"
+              (check-equal? (parser "+(1, 2)")
+                            (a-program (prim-exp (sum-prim)
+                                                 (list (lit-exp 1) (lit-exp 2))))))))
+
 ;; Las suites que agregue el grupo se declaran arriba y se suman aquí.
 
 (define fallidas
   (+ (run-tests base)
      (run-tests primitivas-nuevas)
      (run-tests procedimientos)
-     (run-tests recursion-y-case)))
+     (run-tests recursion-y-case)
+     (run-tests scanner-tests)
+     (run-tests parser-tests)))
 
 (eopl:printf "~%==========================================~%")
 (eopl:printf "  pruebas fallidas en total: ~s~%" fallidas)
