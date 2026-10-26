@@ -57,5 +57,50 @@
     (primitiva("-") minus-prim)
     (primitiva("*") mult-prim)
     (primitiva("/") div-prim)
-   )
-  )
+    ;;unarias (add1, sub1, not, abs)
+    (primitiva("add1") add-prim)
+    (primitiva("sub1") sub-prim)
+    (primitiva("not") not-prim)
+    (primitiva("abs") abs-prim)
+    ;;binarias: relacionales
+    (primitiva(">") mayor-prim)
+    (primitiva(">=") mayorigual-prim)
+    (primitiva("<") menor-prim)
+    (primitiva("<=") menorigual-prim)
+    (primitiva("==") igual-prim)
+    ;;binarias: and, or, xor, implica
+    (primitiva("and") and-prim)
+    (primitiva("or") or-prim)
+    (primitiva("xor") xor-prim)
+    (primitiva("implica") implica-prim)
+    ;;n-arias sobre enteros, mínimo 2 (mcd, mcm)
+    (primitiva("mcd") mcd-prim)
+    (primitiva("mcm") mcm-prim)
+    ;;n-aria sobre números, mínimo 1 (promedio) 
+    (primitiva("promedio") promedio-prim)
+    ;;ternaria (entre)
+    (primitiva("entre") entre-prim)
+    ))
+
+(sllgen:make-define-datatypes especificacion-lexica especificacion-gramatical)
+
+;; mostrar-datatypes : -> void
+;; Lista en pantalla los datatypes que SLLGEN genera a partir de la
+;; gramática. Sirve para revisar los nombres de los constructores.
+(define mostrar-datatypes
+  (lambda ()
+    (sllgen:list-define-datatypes especificacion-lexica especificacion-gramatical)))
+
+;; scanner : string -> lista de tokens
+;; Convierte el texto de un programa en la lista de sus tokens.
+(define scanner
+  (lambda (texto)
+    ((sllgen:make-string-scanner especificacion-lexica especificacion-gramatical)texto)))
+
+;; parser : string -> programa
+;; Convierte el texto de un programa en su árbol de sintaxis abstracta.
+(define parser
+  (lambda (texto)
+    ((sllgen:make-string-parser especificacion-lexica especificacion-gramatical)texto)))
+
+(provide (all-defined-out))
