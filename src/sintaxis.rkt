@@ -1,5 +1,5 @@
 #lang eopl
-;Autores: Nombre1 Codigo1, Nombre2 Codigo2
+;Autores: Aura Maria Pelaez Luna 2459422, Valentina Valencia Lopez 2459626
 
 ;; Taller 2 — El intérprete de Cauca.
 ;; Especificación léxica, especificación gramatical, scanner y parser.
@@ -27,30 +27,35 @@
 ;; genera ninguno.
 
 (define especificacion-lexica
-  '())
+  '((espacio-blanco(whitespace)skip)
+    (comentario("//" (arbno(not #\newline)))skip)
+    (identificador(letter(arbno(or letter digit "_" "?"))) symbol)
+    (numero(digit(arbno digit)) number)
+    (numero("-" digit(arbno digit))number)
+    (numero(digit(arbno digit) "."digit(arbno digit))number)
+    (numero("-" digit(arbno digit) "." digit(arbno digit))number)
+    ))
 
 (define especificacion-gramatical
-  '())
-
-(sllgen:make-define-datatypes especificacion-lexica especificacion-gramatical)
-
-;; mostrar-datatypes : -> void
-;; Lista en pantalla los datatypes que SLLGEN genera a partir de la
-;; gramática. Sirve para revisar los nombres de los constructores.
-(define mostrar-datatypes
-  (lambda ()
-    (sllgen:list-define-datatypes especificacion-lexica especificacion-gramatical)))
-
-;; scanner : string -> lista de tokens
-;; Convierte el texto de un programa en la lista de sus tokens.
-(define scanner
-  (lambda (texto)
-    (eopl:error 'scanner "Sin implementar")))
-
-;; parser : string -> programa
-;; Convierte el texto de un programa en su árbol de sintaxis abstracta.
-(define parser
-  (lambda (texto)
-    (eopl:error 'parser "Sin implementar")))
-
-(provide (all-defined-out))
+ ;;<programa>
+  '((programa(expresion)a-program)
+    ;;<expresion>
+    (expresion(numero)lit-exp)
+    (expresion(identificador)var-exp)
+    (expresion("true")true-exp)
+    (expresion("false")false-exp)
+    (expresion(primitiva "(" (separated-list expresion ",")")") prim-exp)
+    (expresion("if" expresion "then" expresion "else" expresion "end") if-exp)
+    (expresion("let" (arbno identificador "=" expresion)"in" expresion "end" )let-exp)
+    (expresion ("proc" "(" (separated-list identificador ",") ")" expresion "end") proc-exp)
+    (expresion("apply" expresion "(" (separated-list expresion ",")")")app-exp)
+    (expresion ("letrec" (arbno identificador "(" (separated-list identificador ",") ")" "=" expresion) "in" expresion "end")letrec-exp)
+    (expresion ("case" expresion(arbno "of" numero "=>" expresion)"otherwise" "=>" expresion "end")case-exp)
+ ;;<primitiva>
+    ;;n-arias (+, -, *, /)
+    (primitiva("+") sum-prim)
+    (primitiva("-") minus-prim)
+    (primitiva("*") mult-prim)
+    (primitiva("/") div-prim)
+   )
+  )
